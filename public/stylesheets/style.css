@@ -18,3 +18,10 @@ header,
 .top-nav-collapse {
   background-color: #24355c;
 }
+
+.auth-form {
+  margin: 0 auto; /* Added */
+  float: none; /* Added */
+  width: 45%;
+  margin-top: 2%; /* Added */
+}
