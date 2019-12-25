@@ -1,2 +1,3 @@
 smooth scroll does not work
 Google direction api
+Success message on ajax success
