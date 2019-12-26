@@ -9,15 +9,15 @@ const tools = require('../tools');
 // const mongoose = require('mongoose');
 // const conn = mongoose.connection;
 
-router.get("/", function(req, res, next) {
+router.get("/", function (req, res, next) {
   res.render("Admin", { title: "Sign in" });
 });
 
-router.get("/login", function(req, res, next) {
+router.get("/login", function (req, res, next) {
   res.render("login", { title: "Sign in" });
 });
 
-router.get("/register", function(req, res, next) {
+router.get("/register", function (req, res, next) {
   res.render("register", { title: "Register" });
 });
 
@@ -32,13 +32,13 @@ router.get("/register", function(req, res, next) {
 // }
 
 //Dashboard
-router.get('/dashboard', ensureAuthenticated, function(req, res){
+router.get('/dashboard', ensureAuthenticated, function (req, res) {
   // var business_name = '';
-  Content.find({}, function (err, content){
+  Content.find({}, function (err, content) {
     if (err) throw new err();
     if (!content)
       console.log('No content found on dashboard get');
-    else{
+    else {
       console.log('Content found on dashboard get: ');
       console.log(content);
       // console.log(content[0].title);
@@ -46,7 +46,7 @@ router.get('/dashboard', ensureAuthenticated, function(req, res){
       console.log('business_name: ' + business_name);
       if (business_name[0] == '<') //Check if you need to escape it. (p tags are only added if you edit)
         business_name = tools.escapeHTMLtag(business_name, 'p');
-      
+
       // console.log('business_name: ' + business_name);
       res.render('dashboard', {
         title: "Admin dashboard",
@@ -61,7 +61,7 @@ router.get('/dashboard', ensureAuthenticated, function(req, res){
 
 
 //Register POST
-router.post("/register", function(req, res, next) {
+router.post("/register", function (req, res, next) {
   console.log(req.body);
   // res.send("hello");
 
@@ -95,11 +95,11 @@ router.post("/register", function(req, res, next) {
     });
   } else {
     //Validation passed
-    Admin.findOne({email: email}) //making sure admin does not already exists
-      .then(function(user) {
-        if(user){
+    Admin.findOne({ email: email }) //making sure admin does not already exists
+      .then(function (user) {
+        if (user) {
           //user exists
-          errors.push({msg: 'Email is already registered'});
+          errors.push({ msg: 'Email is already registered' });
           res.render("register", {
             title: "Register",
             errors,
@@ -117,16 +117,16 @@ router.post("/register", function(req, res, next) {
           });
 
           // Hash Password
-          bcrypt.genSalt(10, function (err, salt){
-            bcrypt.hash(newAdmin.password, salt, function (err, hash){
+          bcrypt.genSalt(10, function (err, salt) {
+            bcrypt.hash(newAdmin.password, salt, function (err, hash) {
               if (err) throw err;
               newAdmin.password = hash;
               newAdmin.save()
-                .then(function (user){
+                .then(function (user) {
                   req.flash('success_msg', 'You are now registed and can log in');
                   res.redirect('/Admin/login')
                 })
-                .catch(function (err){
+                .catch(function (err) {
                   console.log(err)
                 })
             });
@@ -137,7 +137,7 @@ router.post("/register", function(req, res, next) {
 });
 
 // Login Handle
-router.post('/login', function(req, res, next){
+router.post('/login', function (req, res, next) {
   console.log('authenticating...');
   passport.authenticate('local', {
     successRedirect: '/Admin/dashboard',
@@ -147,13 +147,13 @@ router.post('/login', function(req, res, next){
 });
 
 //Logout Handle
-router.get('/logout', function(req, res){
+router.get('/logout', function (req, res) {
   req.logout();
   req.flash('success_msg', 'You are logged out');
   res.redirect('/Admin/login');
 });
 
-router.post('/dashboard', function(req, res){
+router.post('/dashboard', function (req, res) {
 
   var business_name = req.body.content;
   console.log('Content: ');
@@ -161,7 +161,7 @@ router.post('/dashboard', function(req, res){
   //  const newContent = new Content({
   //    title: content
   //  });
-   
+
   //  newContent
   //    .save()
   //    .then(function(content) {
@@ -179,7 +179,7 @@ router.post('/dashboard', function(req, res){
     {
       $set: { title: business_name }
     },
-    function(err, content) {
+    function (err, content) {
       if (err) throw new err();
       if (!content) console.log("No content found");
       else {
