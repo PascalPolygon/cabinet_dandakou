@@ -2,7 +2,7 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
-var logger = require("morgan"); 
+var logger = require("morgan");
 const passport = require('passport');
 const mongoose = require('mongoose');
 const flash = require('connect-flash'); //for sending messages on redirect
@@ -23,6 +23,8 @@ var AdminRouter = require("./routes/Admin");
 //connect to Mongo
 let uri = process.env.MONGODB_URI;
 
+uri = 'mongodb://heroku_81tf3xbn:b0jb89efmg2po01dhjud348hhj@ds261567.mlab.com:61567/heroku_81tf3xbn'
+
 console.log("Connecting to database...");
 
 mongoose
@@ -31,10 +33,10 @@ mongoose
     useUnifiedTopology: true,
     auto_reconnect: true
   })
-  .then(function() {
+  .then(function () {
     console.log("MongoDB connected!");
   })
-  .catch(function(err) {
+  .catch(function (err) {
     console.log(err);
   });
 // view engine setup
@@ -67,7 +69,7 @@ app.use(passport.session());
 app.use(flash());
 
 //Global vars
-app.use(function (req, res, next){
+app.use(function (req, res, next) {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
@@ -78,7 +80,7 @@ app.use("/users", usersRouter);
 app.use("/Admin", AdminRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
