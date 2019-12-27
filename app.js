@@ -12,6 +12,7 @@ const session = require('express-session');
 require("dotenv").config(); //to pull environment variables from .env file
 // Passport config
 
+
 var app = express();
 
 require("./config/passport")(passport);
