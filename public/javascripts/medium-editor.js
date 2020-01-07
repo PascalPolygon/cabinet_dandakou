@@ -15,42 +15,112 @@ var toolbar = {
     sticky: false,
     updateOnEmptySelection: false
 }
-var editor = new MediumEditor(".editable", {
-    toolbar
-});
 
-var editor1 = new MediumEditor(".editable1", {
-    toolbar
-});
+const editable_content = [
+    ".editable-business-name",
+    ".editable-big-title",
+    ".editable-subt-title",
+    ".editable-nos-valeurs-title",
+    ".editable-nos-valeurs-subt-title",
+    ".editable-valeur-1-title",
+    ".editable-valeur-1",
+    ".editable-valeur-2-title",
+    ".editable-valeur-2",
+    ".editable-valeur-3-title",
+    ".editable-valeur-3",
+    ".editable-clients-title",
+    ".editable-clients-1-title",
+    ".editable-clients-1",
+    ".editable-clients-2-title",
+    ".editable-clients-2",
+    ".editable-clients-3-title",
+    ".editable-clients-3",
+    ".editable-clients-4-title",
+    ".editable-clients-4",
+    ".editable-clients-5-title",
+    ".editable-clients-5",
+    ".editable-clients-6-title",
+    ".editable-clients-6",
+    ".editable-blog-title",
+    ".editable-contactez-nous",
+    ".editable-business-location",
+    ".editable-business-hours",
+    ".editable-business-phone-number",
+    ".editable-footer-business-name",
+    ".editable-footer-business-recap",
+    ".editable-business-services-title",
+    ".editable-service-1",
+    ".editable-service-2",
+    ".editable-service-3",
+    ".editable-service-4",
+    ".editable-liens-utils-title",
+    ".editable-lien-1",
+    ".editable-lien-2",
+    ".editable-lien-3",
+    ".editable-lien-4",
+    ".editable-contact-title",
+    ".editable-location",
+    ".editable-email",
+    ".editable-phone-number",
+    ".editable-fax-number"
+];
 
-var editor2 = new MediumEditor(".editable2", {
-    toolbar
-});
 
+
+var editor_handles = new Array(editable_content.length); //store new MediumEditor call return in this array
+
+for (let i = 0; i < editable_content.length; i++) {
+    editor_handles[i] = createEditorObject(editable_content[i]);
+}
 
 
 $("#saveBtn").click(function () {
     console.log('Click!');
-    var content = editor.getContent();
+
+    var content = {};
+
+    for (let i = 0; i < editable_content.length; i++) {
+        content[deriveFieldFrom(editable_content[i])] = editor_handles[i].getContent();
+        //Derives content object field name from editable content and assigns matching value
+    }
     console.log(content);
-    var content1 = editor1.getContent();
-    console.log(content1);
-    var content2 = editor2.getContent();
-    console.log(content2);
+    // console.log(content.business_name);
 
+    var contentJson = JSON.stringify(content);
+    $.ajax({
+        type: "POST",
+        url: '/Admin/dashboard',
+        // contentType: 'application/json',
+        data: {
+            content: contentJson
+        }
+    }).done(function (res) {
+        if (res.success) {
+            alert('Website updated!');
+            // window.location.reload();
+        } else {
+            console.log('error...ajax');
+        }
+    });
+});
 
-    // $.ajax({
-    //     type: "POST",
-    //     url: '/Admin/dashboard',  
-    //     data: {
-    //         content: logoContent
-    //     },
-    // }).done(function (res) {
-    //     if (res.success) {
-    //         alert('Website updated!');
-    //         // window.location.reload();
-    //     } else {
-    //         console.log('error...ajax');
-    //     }
-    // });
-}); 
+function createEditorObject(className) {
+    return new MediumEditor(className, {
+        toolbar
+    });
+}
+
+function deriveFieldFrom(className) {
+    // console.log('Class name before process: ' + className);
+    var fieldName = className.split('.editable-');
+    // console.log('Derived field: ' + fieldName[1]);
+    //replace dashes with underscore
+    fieldName = replaceDashWithUnderscore(fieldName[1]);
+
+    return fieldName;
+}
+
+function replaceDashWithUnderscore(string) {
+    string = string.split('-');
+    return string.join('_');;
+}

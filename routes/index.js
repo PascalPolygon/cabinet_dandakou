@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const tools = require('../tools');
+const tools = require('../public/javascripts/tools');
+// import { escapeHTMLtag } from '../public/javascripts/tools.js';
 const Content = require("../models/Content");
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   // res.render('index', {title: "cabinet_dandakou"});
   Content.find({}, function (err, content) {
     if (err) throw new err();

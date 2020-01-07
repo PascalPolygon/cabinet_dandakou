@@ -5,7 +5,8 @@ const Content = require("../models/Content"); //Content model
 const bcrypt = require("bcryptjs");
 const passport = require('passport');
 const { ensureAuthenticated } = require("../config/auth");
-const tools = require('../tools');
+const tools = require('../public/javascripts/tools');
+// import escapeHTMLtag from '../public/javascripts/tools.js';
 // const mongoose = require('mongoose');
 // const conn = mongoose.connection;
 
@@ -34,15 +35,23 @@ router.get("/register", function (req, res, next) {
 //Dashboard
 router.get('/dashboard', ensureAuthenticated, function (req, res) {
   // var business_name = '';
-  Content.find({}, function (err, content) {
+  Content.find({}, function (err, result) {
     if (err) throw new err();
-    if (!content)
+    if (!result)
       console.log('No content found on dashboard get');
     else {
       console.log('Content found on dashboard get: ');
-      console.log(content);
+      console.log(result);
       // console.log(content[0].title);
-      var business_name = content[0].title;
+      if (result[0] == null) {
+        console.log('Content is null');
+        result[0] = "Place holder";
+      }
+
+      //Terrible fix against null error;
+      var content = JSON.parse(result[0].content);
+      // var content = result[0].content;
+      var business_name = content.business_name;
       console.log('business_name: ' + business_name);
       if (business_name[0] == '<') //Check if you need to escape it. (p tags are only added if you edit)
         business_name = tools.escapeHTMLtag(business_name, 'p');
@@ -51,7 +60,7 @@ router.get('/dashboard', ensureAuthenticated, function (req, res) {
       res.render('dashboard', {
         title: "Admin dashboard",
         admin: req.user.firstName + ' ' + req.user.lastName,
-        business_name,
+        content,
         // save_success: "Website updated!"
       });
     }
@@ -155,9 +164,11 @@ router.get('/logout', function (req, res) {
 
 router.post('/dashboard', function (req, res) {
 
-  var business_name = req.body.content;
-  console.log('Content: ');
-  console.log(business_name);
+  var content = req.body.content;
+  // var content = JSON.parse(req.body.content);
+  // console.log(content.content);
+
+  // console.log(content);
   //  const newContent = new Content({
   //    title: content
   //  });
@@ -177,7 +188,7 @@ router.post('/dashboard', function (req, res) {
   Content.updateOne(
     {},
     {
-      $set: { title: business_name }
+      $set: { content: content }
     },
     function (err, content) {
       if (err) throw new err();
