@@ -1,2 +1,2 @@
 # cabinet_dandakou
-Simple wysiwyg CMS website for a client
+Simple to use wysiwyg CMS website for a client
