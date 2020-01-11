@@ -1,30 +1,34 @@
 {
-  "name": "cabinet-dandakou",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "node ./bin/www",
-    "devStart": "nodemon"
-  },
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "connect-flash": "^0.1.1",
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "ejs": "^3.0.1",
-    "express": "~4.16.1",
-    "express-session": "^1.17.0",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "medium-editor": "^5.23.3",
-    "mongodb": "^3.4.1",
-    "mongoose": "^5.8.2",
-    "morgan": "~1.9.1",
-    "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
-  },
-  "devDependencies": {
-    "dotenv": "^8.2.0",
-    "nodemon": "^2.0.2"
-  }
+    "name": "cabinet-dandakou",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node ./bin/www",
+        "dev": "nodemon app.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "connect-flash": "^0.1.1",
+        "cookie-parser": "~1.4.4",
+        "debug": "~2.6.9",
+        "ejs": "^3.0.1",
+        "express": "~4.16.1",
+        "express-session": "^1.17.0",
+        "gridfs-stream": "^1.1.1",
+        "http-errors": "~1.6.3",
+        "jade": "~1.11.0",
+        "medium-editor": "^5.23.3",
+        "method-override": "^3.0.0",
+        "mongodb": "^3.4.1",
+        "mongoose": "^5.8.2",
+        "morgan": "~1.9.1",
+        "multer": "^1.4.2",
+        "multer-gridfs-storage": "^4.0.1",
+        "passport": "^0.4.1",
+        "passport-local": "^1.0.0"
+    },
+    "devDependencies": {
+        "dotenv": "^8.2.0",
+        "nodemon": "^2.0.2"
+    }
 }

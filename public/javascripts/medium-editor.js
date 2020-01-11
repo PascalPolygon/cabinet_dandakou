@@ -74,7 +74,7 @@ for (let i = 0; i < editable_content.length; i++) {
 }
 
 
-$("#saveBtn").click(function () {
+$("#saveBtn").click(function() {
     console.log('Click!');
 
     var content = {};
@@ -83,7 +83,20 @@ $("#saveBtn").click(function () {
         content[deriveFieldFrom(editable_content[i])] = editor_handles[i].getContent();
         //Derives content object field name from editable content and assigns matching value
     }
+    if (content.business_name[0] == '<') //Check if you need to escape it. (p tags are only added if you edit)
+        content.business_name = escapeHTMLtag(content.business_name, 'p');
+    // content.business_name = escapeHTMLtag(content.business_name, "p");
     console.log(content);
+    //last 4 fields need to be tag espaced before being written to database
+    // console.log(content.location);
+    // content.location = escapeHTMLtag(content.location, 'i');
+    // content.email = escapeHTMLtag(content.email, 'i');
+    // content.phone_number = escapeHTMLtag(content.phone_number, 'i');
+    // content.fax_number = escapeHTMLtag(content.fax_number, 'i');
+
+    // console.log('After escaping last 3 fields:');
+    // console.log(content);
+
     // console.log(content.business_name);
 
     var contentJson = JSON.stringify(content);
@@ -94,7 +107,7 @@ $("#saveBtn").click(function () {
         data: {
             content: contentJson
         }
-    }).done(function (res) {
+    }).done(function(res) {
         if (res.success) {
             alert('Website updated!');
             // window.location.reload();
@@ -123,4 +136,13 @@ function deriveFieldFrom(className) {
 function replaceDashWithUnderscore(string) {
     string = string.split('-');
     return string.join('_');;
+}
+
+function escapeHTMLtag(str, tag) {
+    if (str == "") return str; //return if the string is empty
+    console.log('str in tools: ' + str);
+    str = str.split(/>(.+)/); //splits at first occurence of >
+    str = str[1];
+    str = str.split('</' + tag + '>');
+    return str[0] + str[1]
 }

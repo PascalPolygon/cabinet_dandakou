@@ -1,36 +1,12 @@
 module.exports = {
-    escapeHTMLtag: function (str, tag) {
+    escapeHTMLtag: function(str, tag) {
         console.log('str in tools: ' + str);
-        var start_delimiter = '<' + tag + '>';
-        var end_delimiter = '</' + tag + '>';
-        str = str.split(start_delimiter);
+        str = str.split(/>(.+)/); //splits at first occurence of >
         console.log(str);
-        str = str[1].split(end_delimiter);
-        var myStr = str[0];
-        console.log(myStr);
-        return myStr;
+        // var str0 = str[0];
+        str = str[1];
+        str = str.split('</' + tag + '>');
+        console.log(str[0] + str[1]);
+        return str[0] + str[1]
     }
 }
-
-// module.exports = {
-//     deriveFieldFrom: function (className) {
-//         console.log('Class name before process: ' + className);
-//         var fieldName = className.split('.editable-');
-//         console.log('Derived field: ' + filedName);
-//         return fieldName;
-//     }
-// }
-// function escapeHTMLtag(str, tag) {
-//     console.log('str in tools: ' + str);
-//     var start_delimiter = '<' + tag + '>';
-//     var end_delimiter = '</' + tag + '>';
-//     str = str.split(start_delimiter);
-//     console.log(str);
-//     str = str[1].split(end_delimiter);
-//     var myStr = str[0];
-//     console.log(myStr);
-//     return myStr;
-// }
-
-
-// export { escapeHTMLtag, deriveFieldFrom };
