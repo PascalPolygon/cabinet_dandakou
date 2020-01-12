@@ -5,10 +5,90 @@ const Content = require("../models/Content"); //Content model
 const bcrypt = require("bcryptjs");
 const passport = require('passport');
 const { ensureAuthenticated } = require("../config/auth");
-const tools = require('../public/javascripts/tools');
-// import escapeHTMLtag from '../public/javascripts/tools.js';
-// const mongoose = require('mongoose');
-// const conn = mongoose.connection;
+//const tools = require('../public/javascripts/tools');
+const mongoose = require('mongoose');
+const path = require('path');
+const multer = require('multer');
+const crypto = require('crypto');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
+const conn = mongoose.connection; //Holds connection opened in app.js
+require("dotenv").config();
+let mongoURI = process.env.MONGODB_URI;
+
+console.log('mongo uri from Admin: ' + mongoURI)
+let gfs;
+
+conn.once('open', function() {
+    //init Stream 
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection('uploads');
+});
+
+//create storage engine
+const storage = new GridFsStorage({
+    url: mongoURI,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'uploads'
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
+});
+const upload = multer({ storage });
+
+router.post("/imageUpload", upload.single('jumboImg'), function(req, res, next) {
+    console.log('Inside image upload post');
+    // res.json({ file: req.file });
+    res.redirect('/Admin/dashboard');
+});
+
+//route GET/ files
+//@Desc display all files in JSON
+router.get("/files", function(req, res) {
+    gfs.files.find().toArray(function(err, files) {
+        //check if files
+        if (!files || files.length == 0) {
+            return res.status(404).json({
+                err: 'No files exist'
+            });
+        }
+        // Files exists
+        console.log(files);
+        return res.json(files);
+    });
+});
+
+//route GET/ files/:filename
+//@Desc display all files in JSON
+router.get("/files/:id", function(req, res) {
+    gfs.findOne({ _id: req.params.id }, function(err, file) {
+        if (!file || file.length == 0) {
+            return res.status(404).json({
+                err: 'File does not exist'
+            });
+        }
+        //Check if image
+        if (file.contentType == 'image/jpeg' || file.contentType == 'image/png') {
+            //Read output to browswer
+            const readstream = gfs.createReadStream(file._id);
+            readstream.pipe(res);
+        } else {
+            res.status(404).json({
+                err: 'Not an image'
+            });
+        }
+    });
+});
 
 router.get("/", function(req, res, next) {
     res.render("Admin", { title: "Sign in" });
@@ -21,16 +101,6 @@ router.get("/login", function(req, res, next) {
 router.get("/register", function(req, res, next) {
     res.render("register", { title: "Register" });
 });
-
-// function escapeHTMLtag(str, tag){
-//   var start_delimiter = '<'+tag+'>';
-//   var end_delimiter = '</'+tag+'>';
-//   str = str.split(start_delimiter);
-//   str = str[1].split(end_delimiter);
-//   var myStr = str[0];
-//   console.log(myStr);
-//   return myStr;
-// }
 
 //Dashboard
 router.get('/dashboard', ensureAuthenticated, function(req, res) {
@@ -51,17 +121,36 @@ router.get('/dashboard', ensureAuthenticated, function(req, res) {
             //Terrible fix against null error;
             var content = JSON.parse(result[0].content);
             // var content = result[0].content;
-            var business_name = content.business_name;
-            console.log('business_name: ' + business_name);
+            // var business_name = '';
+            // if (content.business_name != '')
+            //     business_name = content.business_name;
+            // console.log('business_name: ' + business_name);
             // if (business_name[0] == '<') //Check if you need to escape it. (p tags are only added if you edit)
             //     business_name = tools.escapeHTMLtag(business_name, 'p');
 
             // console.log('business_name: ' + business_name);
-            res.render('dashboard', {
-                title: "Admin dashboard",
-                admin: req.user.firstName + ' ' + req.user.lastName,
-                content,
-                // save_success: "Website updated!"
+
+            //find images from databse
+            gfs.files.find().toArray(function(err, files) {
+                //check if files
+                if (!files || files.length == 0) { // if there are no images
+                    res.render('dashboard', {
+                        title: "Admin dashboard",
+                        admin: req.user.firstName + ' ' + req.user.lastName,
+                        content,
+                        files: false
+                    });
+                } else {
+                    res.render('dashboard', {
+                        title: "Admin dashboard",
+                        admin: req.user.firstName + ' ' + req.user.lastName,
+                        content,
+                        files
+                    });
+                    // console.log(files);
+                    // return res.json(files);
+                }
+
             });
         }
     });

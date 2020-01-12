@@ -91,6 +91,22 @@
                             </h4>
                             <!-- <button type="button" class="btn btn-outline-white">Read more<i class="fas fa-book ml-2"></i>
                                 </button> -->
+                            <form action="/Admin/imageUpload" method="POST" enctype="multipart/form-data">
+                                <input type="file" name="jumboImg" id="jumboImg" class="inputfile" accept="image/x-png,image/gif,image/jpeg" />
+                                <label for="jumboImg" id="jumboImgLabel"><i class="fas fa-upload"></i> Choose a new cover image</label><br>
+                                <button id="uploadJumboImg" type="submit" class="btn btn-outline-success hidden"></button>
+                            </form>
+
+                            <!-- <% if (files) { %>
+                                <% files.forEach(function(file) { %>
+                                    <div class="card card-body mb-3">
+                                        <img src="files/<%= file._id %>" alt="">
+                                    </div>
+
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p>No files to show</p>
+                                            <% } %> -->
                         </div>
                     </div>
                 </div>
@@ -660,29 +676,27 @@
         <!-- CDN scripts -->
         <%- include ('partials/cdn_scripts.ejs') -%>
             <script type="module" src="../javascripts/medium-editor.js"></script>
+            <!-- File upload javascript -->
+            <script type="module" src="../javascripts/file-upload.js"></script>
             <!-- Google maps settings -->
             <script>
                 // Regular map
                 function initMap() {
                     var var_location = new google.maps.LatLng(6.195753, 1.191219);
-
                     var var_mapoptions = {
                         center: var_location,
                         zoom: 14
                     };
-
                     var var_map = new google.maps.Map(
                         document.getElementById("map-container "),
                         var_mapoptions
                     );
-
                     var var_marker = new google.maps.Marker({
                         position: var_location,
                         map: var_map,
                         title: "Cabinet Dandakou "
                     });
                 }
-
                 // Initialize maps
                 // google.maps.event.addDomListener(window, "load ", regular_map);
             </script>

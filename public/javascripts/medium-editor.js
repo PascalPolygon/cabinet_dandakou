@@ -1,3 +1,4 @@
+console.log('Inside medium editor');
 var toolbar = {
     /* These are the default options for the toolbar,
            if nothing is passed this is what is used */
