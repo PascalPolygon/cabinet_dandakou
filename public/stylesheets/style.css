@@ -8,7 +8,8 @@ header,
 #intro {
     /* background: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full%20page/img%20%283%29.jpg")
     no-repeat center center fixed; */
-    background: url("/Admin/files/5e1a5ad0aafd7cca2c826643") no-repeat center center fixed;
+    background: url("/Admin/images/cover") no-repeat center center fixed;
+    /* background: url("../images/scale.jpg") no-repeat center center fixed; */
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

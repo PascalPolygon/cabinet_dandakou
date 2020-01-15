@@ -32,7 +32,8 @@ mongoose
     .connect(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        auto_reconnect: true
+        auto_reconnect: true,
+        useFindAndModify: false
     })
     .then(function() {
         console.log("MongoDB connected!");
@@ -40,6 +41,7 @@ mongoose
     .catch(function(err) {
         console.log(err);
     });
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 // app.set('view engine', 'jade');

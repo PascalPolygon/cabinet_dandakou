@@ -2,3 +2,4 @@ smooth scroll does not work
 Google direction api
 Success message on ajax success
 Odd behavior when you set head <h> tag to text -> because you are setting a head tag inside one
+Replacing on first instance in escapeHTMLtag function does not work properly

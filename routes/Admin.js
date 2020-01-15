@@ -2,13 +2,16 @@ var express = require("express");
 var router = express.Router();
 const Admin = require("../models/Admins"); //Admin model
 const Content = require("../models/Content"); //Content model 
+const Images = require("../models/Images"); //Images model
 const bcrypt = require("bcryptjs");
 const passport = require('passport');
 const { ensureAuthenticated } = require("../config/auth");
 //const tools = require('../public/javascripts/tools');
 const mongoose = require('mongoose');
 const path = require('path');
-const multer = require('multer');
+var multiparty = require('connect-multiparty')();
+var fs = require('fs');
+// const multer = require('multer');
 const crypto = require('crypto');
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
@@ -16,75 +19,107 @@ const conn = mongoose.connection; //Holds connection opened in app.js
 require("dotenv").config();
 let mongoURI = process.env.MONGODB_URI;
 
+//upload handler
+
+// const imageUpload = require('../upload_handler');
+
 console.log('mongo uri from Admin: ' + mongoURI)
 let gfs;
+let imageToDeleteId = '';
 
 conn.once('open', function() {
+    var mongoDriver = mongoose.mongo;
     //init Stream 
-    gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('uploads');
-});
+    gfs = Grid(conn.db, mongoDriver);
+    gfs.collection('fs');
 
-//create storage engine
-const storage = new GridFsStorage({
-    url: mongoURI,
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            crypto.randomBytes(16, (err, buf) => {
-                if (err) {
-                    return reject(err);
+    router.post('/coverImageUpload', multiparty, function(req, res, next) {
+        var coverImageFile = req.files.jumboImg;
+        var filePath = coverImageFile.path;
+        console.log('file path: ' + filePath);
+        const gridFSBucket = new mongoDriver.GridFSBucket(conn.db);
+        const writeStream = gridFSBucket.openUploadStream(coverImageFile.name);
+
+        fs.createReadStream(filePath).pipe(writeStream);
+
+        writeStream.on('finish', function(coverImageFile) {
+            //query data and add to matching manufactuers
+            console.log('Uploaded');
+            console.log('file id:' + coverImageFile._id);
+            //res.redirect('/Admin/dashboard');
+
+            Images.findOneAndRemove({ imageType: 'Cover' }, function(err, imageToDelete) {
+                if (err) return handleError(err);
+                // deleted at most one image document
+                console.log('Deleting image:');
+                console.log(imageToDelete);
+
+                if (imageToDelete != null) {
+                    imageToDeleteId = imageToDelete.imageId;
+                    console.log('Image to delete Id is: ' + imageToDeleteId);
+                    if (imageToDeleteId != null) {
+                        console.log('Image to delete id is not null, it is : ' + imageToDeleteId);
+
+                        console.log('type of imageToDeleteId ' + typeof imageToDeleteId);
+
+                        gfs.remove({ _id: imageToDeleteId, root: 'fs' }, function(error, gridStore) {
+                            if (error) {
+                                return res.status(404).json({ err: err });
+                                //throw new error();
+                                //console.log(error);
+                            }
+                            if (!gridStore)
+                                console.log('Found no file to delete');
+                            else
+                                console.log('Deleted old cover image');
+                        });
+                    } else {
+                        console.log('Image to delete Id is null: ' + imageToDeleteId);
+                    }
                 }
-                const filename = buf.toString('hex') + path.extname(file.originalname);
-                const fileInfo = {
-                    filename: filename,
-                    bucketName: 'uploads'
-                };
-                resolve(fileInfo);
             });
+            //create new image and update datase
+            const image = new Images({
+                imageId: coverImageFile._id,
+                imageName: coverImageFile.filename,
+                imageType: 'Cover'
+            });
+
+            image.save();
+            console.log('Database updated');
+            res.redirect('/Admin/dashboard');
         });
-    }
-});
-const upload = multer({ storage });
-
-router.post("/imageUpload", upload.single('jumboImg'), function(req, res, next) {
-    console.log('Inside image upload post');
-    // res.json({ file: req.file });
-    res.redirect('/Admin/dashboard');
-});
-
-//route GET/ files
-//@Desc display all files in JSON
-router.get("/files", function(req, res) {
-    gfs.files.find().toArray(function(err, files) {
-        //check if files
-        if (!files || files.length == 0) {
-            return res.status(404).json({
-                err: 'No files exist'
-            });
-        }
-        // Files exists
-        console.log(files);
-        return res.json(files);
     });
 });
 
 //route GET/ files/:filename
 //@Desc display all files in JSON
-router.get("/files/:id", function(req, res) {
-    gfs.findOne({ _id: req.params.id }, function(err, file) {
-        if (!file || file.length == 0) {
+router.get("/images/cover", function(req, res) {
+
+    //Query images collection for cover image id
+    Images.findOne({ imageType: 'Cover' }, function(err, imageRecord) {
+        if (err) throw new err();
+        if (!imageRecord) {
             return res.status(404).json({
-                err: 'File does not exist'
+                err: 'Could not find Cover image'
             });
-        }
-        //Check if image
-        if (file.contentType == 'image/jpeg' || file.contentType == 'image/png') {
-            //Read output to browswer
-            const readstream = gfs.createReadStream(file._id);
-            readstream.pipe(res);
+            // TODO: Handle this to use image from images folder
         } else {
-            res.status(404).json({
-                err: 'Not an image'
+            console.log('Found cover image: ');
+            console.log(imageRecord);
+            // use id to query uploads and down stream cover image
+            gfs.findOne({ _id: imageRecord.imageId }, function(err, imageFile) {
+                if (!imageFile || imageFile.length == 0) {
+                    return res.status(404).json({
+                        err: 'File does not exist'
+                    });
+                    // TODO: Handle this to use image from images folder 
+                }
+                console.log('Found file!');
+                console.log(imageFile);
+                const readstream = gfs.createReadStream(imageFile._id);
+                readstream.pipe(res);
+
             });
         }
     });
@@ -287,5 +322,5 @@ router.post('/dashboard', function(req, res) {
             }
         }
     );
-})
+});
 module.exports = router;

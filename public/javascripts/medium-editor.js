@@ -142,8 +142,13 @@ function replaceDashWithUnderscore(string) {
 function escapeHTMLtag(str, tag) {
     if (str == "") return str; //return if the string is empty
     console.log('str in tools: ' + str);
-    str = str.split(/>(.+)/); //splits at first occurence of >
+    str = str.split("<" + tag + ">");
+    //str = str.split(/>(.+)/)[1]; //splits at first occurence of >
+    // str = str.split(/>(.+)/)[1]
+    //str.replace(/\>/, '&').split('&')
+    console.log('After first split: ' + str);
     str = str[1];
+    console.log('Before 148: ' + str);
     str = str.split('</' + tag + '>');
     return str[0] + str[1]
 }
