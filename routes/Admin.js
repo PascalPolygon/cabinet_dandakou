@@ -6,96 +6,26 @@ const Images = require("../models/Images"); //Images model
 const bcrypt = require("bcryptjs");
 const passport = require('passport');
 const { ensureAuthenticated } = require("../config/auth");
-//const tools = require('../public/javascripts/tools');
-const mongoose = require('mongoose');
-const path = require('path');
 var multiparty = require('connect-multiparty')();
-var fs = require('fs');
-// const multer = require('multer');
-const crypto = require('crypto');
-const GridFsStorage = require('multer-gridfs-storage');
-const Grid = require('gridfs-stream');
-const conn = mongoose.connection; //Holds connection opened in app.js
+const fileStream = require("../fileStream"); //init stream for upload and download as well as create stream handle
 require("dotenv").config();
-let mongoURI = process.env.MONGODB_URI;
 
-//upload handler
+//const imageStream = new fileStream(); // init stream for upload and download as well as create stream handle
 
-// const imageUpload = require('../upload_handler');
 
-console.log('mongo uri from Admin: ' + mongoURI)
-let gfs;
-let imageToDeleteId = '';
+router.post('/coverImageUpload', multiparty, function(req, res, next) {
+    var coverImageFile = req.files.jumboImg;
+    var filePath = coverImageFile.path;
+    console.log('file path: ' + filePath);
+    fileStream.uploadAndReplace(coverImageFile, 'Cover');
+    res.redirect('/Admin/dashboard');
 
-conn.once('open', function() {
-    var mongoDriver = mongoose.mongo;
-    //init Stream 
-    gfs = Grid(conn.db, mongoDriver);
-    gfs.collection('fs');
-
-    router.post('/coverImageUpload', multiparty, function(req, res, next) {
-        var coverImageFile = req.files.jumboImg;
-        var filePath = coverImageFile.path;
-        console.log('file path: ' + filePath);
-        const gridFSBucket = new mongoDriver.GridFSBucket(conn.db);
-        const writeStream = gridFSBucket.openUploadStream(coverImageFile.name);
-
-        fs.createReadStream(filePath).pipe(writeStream);
-
-        writeStream.on('finish', function(coverImageFile) {
-            //query data and add to matching manufactuers
-            console.log('Uploaded');
-            console.log('file id:' + coverImageFile._id);
-            //res.redirect('/Admin/dashboard');
-
-            Images.findOneAndRemove({ imageType: 'Cover' }, function(err, imageToDelete) {
-                if (err) return handleError(err);
-                // deleted at most one image document
-                console.log('Deleting image:');
-                console.log(imageToDelete);
-
-                if (imageToDelete != null) {
-                    imageToDeleteId = imageToDelete.imageId;
-                    console.log('Image to delete Id is: ' + imageToDeleteId);
-                    if (imageToDeleteId != null) {
-                        console.log('Image to delete id is not null, it is : ' + imageToDeleteId);
-
-                        console.log('type of imageToDeleteId ' + typeof imageToDeleteId);
-
-                        gfs.remove({ _id: imageToDeleteId, root: 'fs' }, function(error, gridStore) {
-                            if (error) {
-                                return res.status(404).json({ err: err });
-                                //throw new error();
-                                //console.log(error);
-                            }
-                            if (!gridStore)
-                                console.log('Found no file to delete');
-                            else
-                                console.log('Deleted old cover image');
-                        });
-                    } else {
-                        console.log('Image to delete Id is null: ' + imageToDeleteId);
-                    }
-                }
-            });
-            //create new image and update datase
-            const image = new Images({
-                imageId: coverImageFile._id,
-                imageName: coverImageFile.filename,
-                imageType: 'Cover'
-            });
-
-            image.save();
-            console.log('Database updated');
-            res.redirect('/Admin/dashboard');
-        });
-    });
 });
 
 //route GET/ files/:filename
 //@Desc display all files in JSON
 router.get("/images/cover", function(req, res) {
-
+    //let readstream;
     //Query images collection for cover image id
     Images.findOne({ imageType: 'Cover' }, function(err, imageRecord) {
         if (err) throw new err();
@@ -108,19 +38,8 @@ router.get("/images/cover", function(req, res) {
             console.log('Found cover image: ');
             console.log(imageRecord);
             // use id to query uploads and down stream cover image
-            gfs.findOne({ _id: imageRecord.imageId }, function(err, imageFile) {
-                if (!imageFile || imageFile.length == 0) {
-                    return res.status(404).json({
-                        err: 'File does not exist'
-                    });
-                    // TODO: Handle this to use image from images folder 
-                }
-                console.log('Found file!');
-                console.log(imageFile);
-                const readstream = gfs.createReadStream(imageFile._id);
-                readstream.pipe(res);
-
-            });
+            fileStream.download(imageRecord, res);
+            //readstream.pipe(res);
         }
     });
 });
@@ -155,37 +74,11 @@ router.get('/dashboard', ensureAuthenticated, function(req, res) {
 
             //Terrible fix against null error;
             var content = JSON.parse(result[0].content);
-            // var content = result[0].content;
-            // var business_name = '';
-            // if (content.business_name != '')
-            //     business_name = content.business_name;
-            // console.log('business_name: ' + business_name);
-            // if (business_name[0] == '<') //Check if you need to escape it. (p tags are only added if you edit)
-            //     business_name = tools.escapeHTMLtag(business_name, 'p');
 
-            // console.log('business_name: ' + business_name);
-
-            //find images from databse
-            gfs.files.find().toArray(function(err, files) {
-                //check if files
-                if (!files || files.length == 0) { // if there are no images
-                    res.render('dashboard', {
-                        title: "Admin dashboard",
-                        admin: req.user.firstName + ' ' + req.user.lastName,
-                        content,
-                        files: false
-                    });
-                } else {
-                    res.render('dashboard', {
-                        title: "Admin dashboard",
-                        admin: req.user.firstName + ' ' + req.user.lastName,
-                        content,
-                        files
-                    });
-                    // console.log(files);
-                    // return res.json(files);
-                }
-
+            res.render('dashboard', {
+                title: "Admin dashboard",
+                admin: req.user.firstName + ' ' + req.user.lastName,
+                content
             });
         }
     });

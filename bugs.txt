@@ -3,3 +3,17 @@ Google direction api
 Success message on ajax success
 Odd behavior when you set head <h> tag to text -> because you are setting a head tag inside one
 Replacing on first instance in escapeHTMLtag function does not work properly
+HANDLE MongoError: no chunks found for file, possibly corrupt
+    It seems this is cause by specific images in your case the chimp images
+    Try to see if there is a way to check that a file is not corrupted before uploading
+
+ <!-- <% if (files) { %>
+                                <% files.forEach(function(file) { %>
+                                    <div class="card card-body mb-3">
+                                        <img src="files/<%= file._id %>" alt="">
+                                    </div>
+
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p>No files to show</p>
+                                            <% } %> -->
