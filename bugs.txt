@@ -6,6 +6,8 @@ Replacing on first instance in escapeHTMLtag function does not work properly
 HANDLE MongoError: no chunks found for file, possibly corrupt
     It seems this is cause by specific images in your case the chimp images
     Try to see if there is a way to check that a file is not corrupted before uploading
+    Revision: It seems to be caused by downloading large files
+    Probably just figure out how to catch it and re-attempt redirect
 
  <!-- <% if (files) { %>
                                 <% files.forEach(function(file) { %>
