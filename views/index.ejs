@@ -8,60 +8,7 @@
 <body>
     <!--Main Navigation-->
     <header>
-        <!--Navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
-            <div class="container">
-                <!-- Navbar brand -->
-                <a class="navbar-brand editable-business-name" href="#">
-                    <%- content.business_name %>
-                </a>
-
-                <!-- Collapse button -->
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-                <!-- Collapsible content -->
-                <div class="collapse navbar-collapse" id="basicExampleNav">
-                    <!-- Links -->
-                    <ul class="smooth-scroll navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#intro">Acceuil</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#nos-valeurs">Nos valeurs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#clients">Clients</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#blog">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contact">Contactez nous</a>
-                        </li>
-                    </ul>
-                    <!-- /Links -->
-
-                    <!-- Social Icon  -->
-                    <ul class="navbar-nav nav-flex-icons">
-                        <li class="nav-item">
-                            <a class="nav-link"><i class="fab fa-facebook-f"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"><i class="fab fa-twitter"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"><i class="fab fa-instagram"></i></a>
-                        </li>
-                    </ul>
-                    <!-- Social Icon  -->
-                </div>
-                <!-- Collapsible content -->
-            </div>
-        </nav>
-        <!--/.Navbar-->
-
+    <%- include ('partials/navbar.ejs') -%>
         <!--Mask-->
         <div id="intro" class="view">
             <div class="mask flex-center rgba-black-strong">
@@ -176,7 +123,7 @@
                         <div class="col-lg-4 col-md-12 mb-4">
                             <!-- img fluid is for responsiveness -->
                             <div class="view overlay zoom z-depth-1-half">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" class="img-fluid" />
+                                <img src="/Admin/images/client1" class="img-fluid" />
                                 <a href="#!">
                                     <div class="mask flex-center rgba-white-slight">
                                         <p class="white-text">View more</p>
@@ -196,7 +143,7 @@
                         <!-- Grid column -->
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="view overlay zoom z-depth-1-half">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/images/44.jpg" class="img-fluid" />
+                                <img src="/Admin/images/client2" class="img-fluid" />
                                 <a href="#!">
                                     <div class="mask flex-center rgba-white-slight">
                                         <p class="white-text">View more</p>
@@ -216,7 +163,7 @@
                         <!-- Grid column -->
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="view overlay zoom z-depth-1-half">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/images/45.jpg" class="img-fluid" />
+                            <img src="/Admin/images/client3" class="img-fluid" />
                                 <a href="#!">
                                     <div class="mask flex-center rgba-white-slight">
                                         <p class="white-text">View more</p>
@@ -241,7 +188,7 @@
                         <!-- mb means margin bottom -->
                         <div class="col-lg-4 col-md-12 mb-4">
                             <div class="view overlay zoom z-depth-1-half">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" class="img-fluid" />
+                                <img src="/Admin/images/client4" class="img-fluid" />
                                 <a href="#!">
                                     <div class="mask flex-center rgba-white-slight">
                                         <p class="white-text">View more</p>
@@ -261,7 +208,7 @@
                         <!-- Grid column -->
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="view overlay zoom z-depth-1-half">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/images/47.jpg" class="img-fluid" />
+                            <img src="/Admin/images/client5" class="img-fluid" />
                                 <a href="#!">
                                     <div class="mask flex-center rgba-white-slight">
                                         <p class="white-text">View more</p>
@@ -281,7 +228,7 @@
                         <!-- Grid column -->
                         <div class="col-lg-4 col-md-6 mb-4">
                             <div class="view overlay zoom z-depth-1-half">
-                                <img src="https://mdbootstrap.com/img/Photos/Others/images/48.jpg" class="img-fluid" />
+                                <img src="/Admin/images/client6" class="img-fluid" />
                                 <a href="#!">
                                     <div class="mask flex-center rgba-white-slight">
                                         <p class="white-text">View more</p>

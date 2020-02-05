@@ -2,64 +2,64 @@ html,
 body,
 header,
 #intro {
-    height: 100%;
+  height: 100%;
 }
 
 #intro {
-    /* background: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full%20page/img%20%283%29.jpg")
+  /* background: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full%20page/img%20%283%29.jpg")
     no-repeat center center fixed; */
-    background: url("/Admin/images/cover") no-repeat center center fixed;
-    /* background: url("../images/scale.jpg") no-repeat center center fixed; */
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+  background: url("/Admin/images/cover") no-repeat center center fixed;
+  /* background: url("../images/scale.jpg") no-repeat center center fixed; */
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
 .top-nav-collapse {
-    background-color: #24355c;
+  background-color: #24355c;
 }
 
 .auth-form {
-    margin: 0 auto;
-    /* Added */
-    float: none;
-    /* Added */
-    width: 45%;
-    margin-top: 2%;
-    /* Added */
+  margin: 0 auto;
+  /* Added */
+  float: none;
+  /* Added */
+  width: 45%;
+  margin-top: 2%;
+  /* Added */
 }
 
 .inputfile {
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
-.inputfile+label {
-    font-size: 1.25em;
-    font-weight: 700;
-    color: white;
-    background-color: #4285f4;
-    padding: 0.5em;
-    border-radius: 5px;
-    display: inline-block;
-    cursor: pointer;
+.inputfile + label {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  background-color: #4285f4;
+  padding: 0.5em;
+  border-radius: 5px;
+  display: inline-block;
+  cursor: pointer;
 }
 
-.inputfile:focus+label,
-.inputfile+label:hover {
-    background-color: #0069d9;
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: #0069d9;
 }
 
 .uploadBtn:hover {
-    background-color: #0069d9;
-    /*Doesn't seem to work*/
+  background-color: #0069d9;
+  /*Doesn't seem to work*/
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
