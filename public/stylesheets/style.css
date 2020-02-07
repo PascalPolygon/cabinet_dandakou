@@ -63,3 +63,8 @@ header,
 .hidden {
   display: none;
 }
+
+.not-active {
+  pointer-events: none;
+  cursor: default;
+}
